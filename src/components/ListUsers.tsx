@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import Image from 'next/image';
+import { get } from 'http';
 
 interface User {
     id: string;
@@ -65,8 +66,21 @@ function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function
         .then((data) => {
             console.log(data)
             setUpdate(!update)
+            setEdit("")
         }
         );
+    }
+
+    // funcion para obtener la Edad del usuario
+    const getAge = (birthday: string) => {
+        const today = new Date();
+        const birthDate = new Date(birthday);
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+        }
+        return age;
     }
 
 
@@ -82,6 +96,7 @@ function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function
                     <td > <input type="text" value={editUser.name} className='text-black' onChange={(e)=>{setEditUser({...editUser, name: e.target.value})}}/> </td>
                     <td> <input type="text" value={editUser.email} className='text-black' onChange={(e)=>{setEditUser({...editUser, email: e.target.value})}}/> </td>
                     <td> <input type="text" value={editUser.phone} className='text-black' onChange={(e)=>{setEditUser({...editUser, phone: e.target.value})}}/> </td>
+                    <td>  <input type="date" value={editUser.birthday} className='text-black' onChange={(e)=> {setEditUser({...editUser, birthday:e.target.value})}} />  </td>
                     <td>
                         <button onClick={()=>{
                             updateUser(editUser)
@@ -99,6 +114,7 @@ function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function
                     <td >{user.name}</td>
                     <td>{user.email}</td>
                     <td>{user.phone}</td>
+                    <td>{getAge(user.birthday)} años</td>
                     <td>
                         <button onClick={()=>{
                             setEditUser(user)
@@ -123,9 +139,10 @@ function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function
             <thead className=''>
                 <tr>
                     <th className='text-start'>Photo</th>
-                    <th className='text-start' >Nombre</th>
+                    <th className='text-start' >Nombre </th>
                     <th className='text-start' >Email</th>
                     <th className='text-start' >Phone</th>
+                    <th className='text-start'> Edad </th>
                     <th className='text-start' >Acciones</th>
                 </tr>
             </thead>
