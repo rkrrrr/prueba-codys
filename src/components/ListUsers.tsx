@@ -73,13 +73,12 @@ function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function
 
     // funcion para obtener la Edad del usuario
     const getAge = (birthday: string) => {
+        console.log(birthday)
         const today = new Date();
         const birthDate = new Date(birthday);
         let age = today.getFullYear() - birthDate.getFullYear();
         const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-        }
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {age--;}
         return age;
     }
 
