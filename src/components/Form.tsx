@@ -18,6 +18,8 @@ export default function Form({ update, setUpdate }: { update: boolean, setUpdate
     birth: "",
     photo: null,
   });
+
+  console.log(user);
   // funcion para renderizar la foto de perfil
   const renderPhoto = () => {
     if (user.photo) {
@@ -64,6 +66,7 @@ export default function Form({ update, setUpdate }: { update: boolean, setUpdate
     e.preventDefault();
     if (user.photo) {
       const imgbase64 = await toBase64(user.photo);
+      console.log(imgbase64);
       const data = JSON.stringify({
         name: user.name,
         email: user.email,
@@ -79,9 +82,12 @@ export default function Form({ update, setUpdate }: { update: boolean, setUpdate
         body: data,
       })
         .then((res) => res.json())
-        .then((data) => console.log(data));
+        .then((data) => {
+          console.log(data)
+          setUpdate(!update)
+        });
+        
     }
-    setUpdate(!update);
   };
 
   return (

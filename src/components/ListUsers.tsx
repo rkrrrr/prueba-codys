@@ -26,20 +26,18 @@ function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function
         birthday: '',
         photo: ''
     })
+    console.log(editUser)
     // estado para actualizar el formulario
     const [edit, setEdit] = React.useState<string>('')
     // funcion para obtener los usuarios y luego actualizar el estado
     React.useEffect(() => {
         fetch('http://localhost:3000/api/savedata')
         .then(response => response.json())
-        .then(data => setUsers(data))
-    }, [update])
+        .then(data => {
+            setUsers(data)
+        })
 
-    React.useEffect(() => {
-        fetch('http://localhost:3000/api/savedata')
-        .then(response => response.json())
-        .then(data => setUsers(data))
-    }, [edit])
+    }, [update])
 
     // funcion que elimina usuarios
     const deleteUser = (id: string) => {
@@ -50,6 +48,7 @@ function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function
         },
         body: JSON.stringify(id),
       })
+      console.log(res)
       setUpdate(!update)
     }
 
@@ -62,7 +61,12 @@ function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function
             },
         body: JSON.stringify(editUser),
         })
-        setUpdate(!update)
+        .then((res) => res.json())
+        .then((data) => {
+            console.log(data)
+            setUpdate(!update)
+        }
+        );
     }
 
 
@@ -86,7 +90,6 @@ function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function
                         className='bg-green-500 p-5'>guardar</button>
                         <button onClick={()=>{
                             deleteUser(user.id)
-                            setUpdate(!update)
                         }}  className='bg-red-500 p-5' >Eliminar</button>
                     </td>
                 </tr>
