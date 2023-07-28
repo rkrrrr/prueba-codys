@@ -7,13 +7,11 @@ prisma.$connect()
 export async function GET(request: NextRequest, response: NextResponse) {
 // conseguir los datos de la base de datos
     const allUsers = await prisma.contact.findMany()
-    console.log(allUsers)
 return NextResponse.json(allUsers);
 }
 // crear usuario
 export async function POST(request: NextRequest, response: NextResponse) {
     const body = await request.json()
-    console.log(body)
     // insertar datos en la base de datos
     const user = await prisma.contact.create({
         data: {
@@ -31,7 +29,6 @@ export async function POST(request: NextRequest, response: NextResponse) {
 // actualizar usuario
 export async function PUT(request: NextRequest, response: NextResponse) {
     const body = await request.json()
-    console.log(body)
     const user = await prisma.contact.update({
         where: {
             id: body.id,

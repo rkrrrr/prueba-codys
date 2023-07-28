@@ -10,7 +10,7 @@ interface User {
   photo: File | null;
 }
 
-export default function Form() {
+export default function Form({ update, setUpdate }: { update: boolean, setUpdate: Function }) {
   const [user, setUser] = useState<User>({
     name: "",
     email: "",
@@ -18,8 +18,6 @@ export default function Form() {
     birth: "",
     photo: null,
   });
-
-  console.log(user);
   // funcion para renderizar la foto de perfil
   const renderPhoto = () => {
     if (user.photo) {
@@ -66,7 +64,6 @@ export default function Form() {
     e.preventDefault();
     if (user.photo) {
       const imgbase64 = await toBase64(user.photo);
-      console.log(imgbase64);
       const data = JSON.stringify({
         name: user.name,
         email: user.email,
@@ -84,6 +81,7 @@ export default function Form() {
         .then((res) => res.json())
         .then((data) => console.log(data));
     }
+    setUpdate(!update);
   };
 
   return (

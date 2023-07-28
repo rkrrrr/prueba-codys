@@ -14,7 +14,7 @@ interface User {
 export const dynamic='force-dynamic'
 
 
-function ListUsers() {
+function ListUsers({ update, setUpdate }: { update: boolean, setUpdate: Function }) {
     // inicializamos el estado de los usuarios
     const [users, setUsers] = React.useState([]);
     // estado para actualizar los usuarios
@@ -26,12 +26,20 @@ function ListUsers() {
         birthday: '',
         photo: ''
     })
+    // estado para actualizar el formulario
+    const [edit, setEdit] = React.useState<string>('')
     // funcion para obtener los usuarios y luego actualizar el estado
     React.useEffect(() => {
         fetch('http://localhost:3000/api/savedata')
         .then(response => response.json())
         .then(data => setUsers(data))
-    }, [users])
+    }, [update])
+
+    React.useEffect(() => {
+        fetch('http://localhost:3000/api/savedata')
+        .then(response => response.json())
+        .then(data => setUsers(data))
+    }, [edit])
 
     // funcion que elimina usuarios
     const deleteUser = (id: string) => {
@@ -42,27 +50,69 @@ function ListUsers() {
         },
         body: JSON.stringify(id),
       })
-      console.log(res)
+      setUpdate(!update)
     }
+
+    // funcion para actualizar usuarios
+    const updateUser = (editUser: User) => {
+        const res = fetch("http://localhost:3000/api/savedata", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            },
+        body: JSON.stringify(editUser),
+        })
+        setUpdate(!update)
+    }
+
+
+
     // funcion para listar los usuarios
     const listUsers = () => {
         return users.map((user: User) => {
             return (
+            edit === user.id ?
+            
+                <tr className='' key={user.id}>
+                    <td> <Image src={`${user.photo}`} alt={'photo'} width={100} height={100} className='w-32 h-32 p-3 rounded-full'/> </td>
+                    <td > <input type="text" value={editUser.name} className='text-black' onChange={(e)=>{setEditUser({...editUser, name: e.target.value})}}/> </td>
+                    <td> <input type="text" value={editUser.email} className='text-black' onChange={(e)=>{setEditUser({...editUser, email: e.target.value})}}/> </td>
+                    <td> <input type="text" value={editUser.phone} className='text-black' onChange={(e)=>{setEditUser({...editUser, phone: e.target.value})}}/> </td>
+                    <td>
+                        <button onClick={()=>{
+                            updateUser(editUser)
+                            setEdit("")
+                        }}
+                        className='bg-green-500 p-5'>guardar</button>
+                        <button onClick={()=>{
+                            deleteUser(user.id)
+                            setUpdate(!update)
+                        }}  className='bg-red-500 p-5' >Eliminar</button>
+                    </td>
+                </tr>
+             :
                 <tr key={user.id}>
                     <td> <Image src={`${user.photo}`} alt={'photo'} width={100} height={100} className='w-32 h-32 p-3 rounded-full'/> </td>
                     <td >{user.name}</td>
                     <td>{user.email}</td>
                     <td>{user.phone}</td>
                     <td>
-                        <button className='bg-green-500 p-5'>Editar</button>
+                        <button onClick={()=>{
+                            setEditUser(user)
+                            setEdit(user.id)
+                        }}
+                        className='bg-green-500 p-5'>
+                            Editar
+                        </button>
+
                         <button onClick={()=>{
                             deleteUser(user.id)
-                        }}  className='bg-red-500 p-5' >Eliminar</button>
+                        }}  className='bg-red-500 p-5' >
+                            Eliminar
+                        </button>
                     </td>
-                    
                 </tr>
-            )
-        })}
+        )})}
   return (
     <div >
         <h1 className='text-white text-center'>Lista de Usuarios</h1>
